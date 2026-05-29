@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الجوهرة للمستلزمات الرياضية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF6B00;
+    --orange-light: #FF8C33;
+    --orange-dim: #FF6B0022;
+    --white: #FFFFFF;
+    --black: #0A0A0A;
+    --dark: #111111;
+    --dark2: #1A1A1A;
+    --dark3: #222222;
+    --gray: #888888;
+    --gray-light: #CCCCCC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Cairo', sans-serif; background: var(--black); color: var(--white); min-height: 100vh; overflow-x: hidden; }
+
+  header { background: var(--dark); border-bottom: 2px solid var(--orange); padding: 0 24px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 44px; height: 44px; background: var(--orange); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #000; }
+  .logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .logo-text .main { font-size: 18px; font-weight: 900; color: var(--white); }
+  .logo-text .sub { font-size: 12px; color: var(--orange); font-weight: 600; letter-spacing: 1px; }
+
+  .hero { background: linear-gradient(135deg, var(--dark) 0%, #1a0a00 50%, #0a0a0a 100%); padding: 60px 24px 50px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -50%; left: -20%; width: 600px; height: 600px; background: radial-gradient(circle, #FF6B0015 0%, transparent 70%); pointer-events: none; }
+  .hero h1 { font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 12px; }
+  .hero h1 span { color: var(--orange); }
+  .hero p { color: var(--gray-light); font-size: 16px; }
+
+  /* بانر الخصم — يظهر فقط عند تفعيل الخصم من الكود */
+  .discount-banner { background: var(--orange); color: #000; text-align: center; padding: 12px 24px; font-size: 15px; font-weight: 700; display: none; }
+  .discount-banner.visible { display: block; }
+
+  .price-tag { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .price-current { font-size: 18px; font-weight: 900; color: var(--orange); }
+  .price-original { font-size: 14px; color: var(--gray); text-decoration: line-through; }
+  .price-badge { background: var(--orange); color: #000; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+
+  .section-title { padding: 0 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+  .section-title h2 { font-size: 22px; font-weight: 900; }
+  .section-title .line { flex: 1; height: 2px; background: var(--dark3); }
+  .section-title .count { background: var(--orange-dim); border: 1px solid var(--orange); color: var(--orange); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+
+  .products-section { padding: 0 24px; margin-bottom: 48px; }
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+
+  .product-card { background: var(--dark2); border: 1px solid var(--dark3); border-radius: 16px; overflow: hidden; transition: all 0.3s; }
+  .product-card:hover { border-color: var(--orange); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(255,107,0,0.15); }
+
+  .product-image-wrap { width: 100%; height: 220px; background: var(--dark3); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .product-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+  .product-card:hover .product-image-wrap img { transform: scale(1.05); }
+  .product-placeholder { display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--gray); }
+  .product-placeholder .ph-icon { width: 64px; height: 64px; background: var(--dark); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; border: 1px dashed var(--dark3); }
+  .product-placeholder p { font-size: 13px; }
+  .product-label { position: absolute; top: 12px; right: 12px; background: var(--orange); color: #000; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+  .tbd-label { position: absolute; top: 12px; right: 12px; background: var(--dark); border: 1px solid var(--gray); color: var(--gray-light); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+
+  .product-info { padding: 16px; }
+  .product-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: var(--white); }
+  .product-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+  .size-select { background: var(--dark3); border: 1px solid var(--dark3); color: var(--white); font-family: 'Cairo', sans-serif; font-size: 13px; padding: 8px 10px; border-radius: 8px; cursor: pointer; flex: 1; max-width: 120px; transition: border-color 0.2s; }
+  .size-select:focus { outline: none; border-color: var(--orange); }
+  .add-cart-btn { background: var(--orange); border: none; color: #000; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700; padding: 9px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; white-space: nowrap; }
+  .add-cart-btn:hover { background: var(--orange-light); transform: scale(1.03); }
+  .add-cart-btn:active { transform: scale(0.97); }
+  .price-tbd { font-size: 14px; color: var(--gray); font-style: italic; }
+
+  #cart-fab { position: fixed; bottom: 28px; left: 28px; width: 62px; height: 62px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(255,107,0,0.5); z-index: 200; transition: all 0.3s; }
+  #cart-fab:hover { transform: scale(1.1); box-shadow: 0 12px 40px rgba(255,107,0,0.7); }
+  #cart-fab svg { width: 28px; height: 28px; fill: #000; }
+  #cart-count { position: absolute; top: -4px; right: -4px; width: 22px; height: 22px; background: var(--white); color: #000; border-radius: 50%; font-size: 12px; font-weight: 700; display: none; align-items: center; justify-content: center; border: 2px solid var(--orange); }
+
+  #cart-modal { display: none; position: fixed; inset: 0; z-index: 300; }
+  #cart-modal.open { display: flex; }
+  .cart-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); }
+  .cart-panel { position: absolute; left: 0; top: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--dark); border-right: 2px solid var(--orange); display: flex; flex-direction: column; animation: slideIn 0.3s ease; }
+  @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+  .cart-header { padding: 20px 20px 16px; border-bottom: 1px solid var(--dark3); display: flex; align-items: center; justify-content: space-between; }
+  .cart-header h3 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .close-cart { background: var(--dark2); border: 1px solid var(--dark3); color: var(--white); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: border-color 0.2s; }
+  .close-cart:hover { border-color: var(--orange); }
+  .cart-items { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: thin; scrollbar-color: var(--orange) var(--dark3); }
+  .cart-item { background: var(--dark2); border: 1px solid var(--dark3); border-radius: 12px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; position: relative; }
+  .cart-item-img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; background: var(--dark3); flex-shrink: 0; }
+  .cart-item-placeholder-img { width: 72px; height: 72px; border-radius: 8px; background: var(--dark3); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--gray); }
+  .cart-item-info { flex: 1; min-width: 0; }
+  .cart-item-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .cart-item-details { font-size: 12px; color: var(--gray); margin-bottom: 6px; }
+  .cart-item-price { font-size: 15px; font-weight: 700; color: var(--orange); }
+  .remove-item { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 16px; transition: color 0.2s; position: absolute; top: 8px; left: 8px; }
+  .remove-item:hover { color: #ff4444; }
+  .cart-empty { text-align: center; padding: 60px 20px; color: var(--gray); }
+  .cart-empty .empty-icon { font-size: 52px; margin-bottom: 16px; }
+  .cart-footer { padding: 16px 20px; border-top: 1px solid var(--dark3); background: var(--dark); }
+  .cart-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 16px; font-weight: 700; }
+  .cart-total .total-price { color: var(--orange); font-size: 20px; }
+  .cart-note { font-size: 12px; color: var(--gray); text-align: center; margin-bottom: 12px; line-height: 1.6; }
+  .send-whatsapp-btn { width: 100%; background: #25D366; border: none; color: #fff; font-family: 'Cairo', sans-serif; font-size: 16px; font-weight: 700; padding: 14px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; }
+  .send-whatsapp-btn:hover { background: #1ebe5a; transform: scale(1.02); }
+
+  footer { background: var(--dark); border-top: 2px solid var(--dark3); padding: 32px 24px; text-align: center; }
+  footer .footer-logo { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+  footer .footer-logo span { color: var(--orange); }
+  footer p { color: var(--gray); font-size: 13px; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 32px; }
+    .products-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+    .cart-panel { width: 100vw; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">J</div>
+    <div class="logo-text">
+      <span class="main">الجوهرة</span>
+      <span class="sub">للمستلزمات الرياضية</span>
+    </div>
+  </div>
+</header>
+
+<!-- بانر الخصم — يظهر تلقائياً عند تفعيل DISCOUNT_ACTIVE = true -->
+<div class="discount-banner" id="discount-banner">
+  🔥 خصم الأسبوع — الأحذية بسعر 15 BD بدلاً من 20 BD!
+</div>
+
+<div class="hero">
+  <h1>أفضل المعدات<br><span>الرياضية</span></h1>
+  <p>أحذية كرة القدم · قفازات الحراس · مستلزمات رياضية متنوعة</p>
+</div>
+
+<!-- ⚽ أحذية -->
+<div class="section-title" style="margin-top:32px">
+  <span>⚽</span>
+  <h2>أحذية كرة القدم</h2>
+  <div class="line"></div>
+  <div class="count" id="shoes-count"></div>
+</div>
+<div class="products-section">
+  <div class="products-grid" id="shoes-grid"></div>
+</div>
+
+<!-- 🧤 قفازات -->
+<div class="section-title">
+  <span>🧤</span>
+  <h2>قفازات حراس المرمى</h2>
+  <div class="line"></div>
+  <div class="count" id="gloves-count"></div>
+</div>
+<div class="products-section">
+  <div class="products-grid" id="gloves-grid"></div>
+</div>
+
+<!-- 🏅 مستلزمات -->
+<div class="section-title">
+  <span>🏅</span>
+  <h2>مستلزمات رياضية</h2>
+  <div class="line"></div>
+  <div class="count" id="acc-count"></div>
+</div>
+<div class="products-section">
+  <div class="products-grid" id="acc-grid"></div>
+</div>
+
+<footer>
+  <div class="footer-logo">الجوهرة <span>⚽</span></div>
+  <p>للطلبات والاستفسار: WhatsApp <strong>36825523</strong></p>
+  <p style="margin-top:8px; font-size:12px; color:#555">© 2025 الجوهرة للمستلزمات الرياضية</p>
+</footer>
+
+<button id="cart-fab" onclick="openCart()">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+    <line x1="3" y1="6" x2="21" y2="6" stroke="#000" stroke-width="2" fill="none"/>
+    <path d="M16 10a4 4 0 01-8 0" fill="none" stroke="#000" stroke-width="2"/>
+  </svg>
+  <span id="cart-count">0</span>
+</button>
+
+<div id="cart-modal">
+  <div class="cart-overlay" onclick="closeCart()"></div>
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h3>🛒 سلة المشتريات</h3>
+      <button class="close-cart" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items-list">
+      <div class="cart-empty"><div class="empty-icon">🛒</div><p>السلة فارغة</p></div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>المجموع:</span>
+        <span class="total-price" id="cart-total-price">0 BD</span>
+      </div>
+      <div class="cart-note">سيتم إرسال تفاصيل الطلب عبر واتساب</div>
+      <button class="send-whatsapp-btn" onclick="sendToWhatsApp()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        إرسال الطلب عبر واتساب
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  /* ============================================================
+     ✏️  منطقة الإعدادات — كل التعديلات تتم هنا فقط
+     ============================================================ */
+
+  /* --- 🔥 الخصم الأسبوعي ---
+     true  = الخصم مفعّل   (الأحذية بسعر 15 BD)
+     false = الخصم غير مفعّل (الأحذية بسعر 20 BD)         */
+  const DISCOUNT_ACTIVE = false;
+
+
+  /* --- ⚽ الأحذية ---
+     sizeRange: 'a' = مقاسات 33-46 | 'b' = مقاسات 35-45
+     img: ضع رابط الصورة بين علامتي التنصيص، مثال:
+          img: 'https://example.com/shoe1.jpg'
+          أو ضع الصورة كـ base64:
+          img: 'data:image/jpeg;base64,/9j/4AAQ...'            */
+  const shoesData = [
+    { id: 's1', name: 'حذاء نايك ميركوريال',   sizeRange: 'a', img: "683871640_17953927470129406_2955768557695477667_n (1).jpg", emoji: '👟' },
+    { id: 's2', name: 'حذاء أديداس بريداتور',  sizeRange: 'a', img: null, emoji: '👟' },
+    { id: 's3', name: 'حذاء بوما فيوتشر',      sizeRange: 'b', img: null, emoji: '👟' },
+    { id: 's4', name: 'حذاء نيو بالانس تكلا',  sizeRange: 'b', img: null, emoji: '👟' },
+    { id: 's5', name: 'حذاء أندر أرمر كلاتش', sizeRange: 'a', img: null, emoji: '👟' },
+    { id: 's6', name: 'حذاء ميزونو ويف',       sizeRange: 'b', img: null, emoji: '👟' },
+  ];
+
+
+  /* --- 🧤 القفازات ---
+     img: نفس طريقة الأحذية أعلاه                             */
+  const glovesData = [
+    { id: 'g1', name: 'قفاز ريبوك إيليت',     img: null, emoji: '🧤' },
+    { id: 'g2', name: 'قفاز أديداس بريداتور', img: null, emoji: '🧤' },
+    { id: 'g3', name: 'قفاز نايك جي كيبر',   img: null, emoji: '🧤' },
+    { id: 'g4', name: 'قفاز بوما فيوجن',      img: null, emoji: '🧤' },
+  ];
+
+
+  /* --- 🏅 المستلزمات الرياضية ---
+     price: اكتب السعر رقماً عند تحديده، مثال: price: 5
+            أو اتركه null إذا لم يُحدد بعد
+     img: نفس طريقة الأحذية أعلاه                             */
+  const accessoriesData = [
+    { id: 'a1', name: 'كرة تدريب',   price: null, img: null, emoji: '⚽' },
+    { id: 'a2', name: 'جوارب رياضية', price: null, img: null, emoji: '🧦' },
+    { id: 'a3', name: 'حقيبة رياضية', price: null, img: null, emoji: '🎒' },
+    { id: 'a4', name: 'مضخة هواء',   price: null, img: null, emoji: '💨' },
+  ];
+
+  /* ============================================================
+     ⛔  لا تعدّل ما بعد هذا السطر
+     ============================================================ */
+
+  const SHOE_NORMAL_PRICE = 20;
+  const SHOE_SALE_PRICE   = 15;
+  const GLOVE_PRICE       = 15;
+  const SIZES_A = [33,34,35,36,37,38,39,40,41,42,43,44,45,46];
+  const SIZES_B = [35,36,37,38,39,40,41,42,43,44,45];
+  const GLOVE_SIZES = [5,6,7,8,9,10];
+
+  let cart = [];
+
+  // إظهار بانر الخصم
+  if (DISCOUNT_ACTIVE) {
+    document.getElementById('discount-banner').classList.add('visible');
+  }
+
+  function buildOptions(sizes) {
+    return sizes.map(s => `<option value="${s}">${s}</option>`).join('');
+  }
+
+  function imgHtml(p) {
+    return p.img
+      ? `<img src="${p.img}" alt="${p.name}" />`
+      : `<div class="product-placeholder"><div class="ph-icon">${p.emoji}</div><p>قريباً</p></div>`;
+  }
+
+  // --- رندر الأحذية ---
+  function renderShoes() {
+    const grid = document.getElementById('shoes-grid');
+    grid.innerHTML = '';
+    const price = DISCOUNT_ACTIVE ? SHOE_SALE_PRICE : SHOE_NORMAL_PRICE;
+    const priceHtml = DISCOUNT_ACTIVE
+      ? `<div class="price-tag"><span class="price-current">${SHOE_SALE_PRICE} BD</span><span class="price-original">${SHOE_NORMAL_PRICE} BD</span><span class="price-badge">خصم</span></div>`
+      : `<div class="price-tag"><span class="price-current">${SHOE_NORMAL_PRICE} BD</span></div>`;
+
+    shoesData.forEach(p => {
+      const sizes = p.sizeRange === 'a' ? SIZES_A : SIZES_B;
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <div class="product-image-wrap">
+          ${imgHtml(p)}
+          ${DISCOUNT_ACTIVE ? '<span class="product-label">🔥 خصم</span>' : ''}
+        </div>
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          ${priceHtml}
+          <div class="product-actions">
+            <select class="size-select" id="size-${p.id}">
+              <option value="">اختر المقاس</option>
+              ${buildOptions(sizes)}
+            </select>
+            <button class="add-cart-btn" onclick="addToCart('${p.id}','shoe')">🛒 أضف</button>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+    document.getElementById('shoes-count').textContent = shoesData.length + ' منتج';
+  }
+
+  // --- رندر القفازات ---
+  function renderGloves() {
+    const grid = document.getElementById('gloves-grid');
+    grid.innerHTML = '';
+    glovesData.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <div class="product-image-wrap">${imgHtml(p)}</div>
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          <div class="price-tag"><span class="price-current">${GLOVE_PRICE} BD</span></div>
+          <div class="product-actions">
+            <select class="size-select" id="size-${p.id}">
+              <option value="">اختر المقاس</option>
+              ${buildOptions(GLOVE_SIZES)}
+            </select>
+            <button class="add-cart-btn" onclick="addToCart('${p.id}','glove')">🛒 أضف</button>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+    document.getElementById('gloves-count').textContent = glovesData.length + ' منتج';
+  }
+
+  // --- رندر المستلزمات ---
+  function renderAccessories() {
+    const grid = document.getElementById('acc-grid');
+    grid.innerHTML = '';
+    accessoriesData.forEach(p => {
+      const priceHtml = p.price !== null
+        ? `<div class="price-tag"><span class="price-current">${p.price} BD</span></div>`
+        : `<div class="price-tbd">سيتم تحديد السعر لاحقاً</div>`;
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <div class="product-image-wrap">
+          ${imgHtml(p)}
+          ${p.price === null ? '<span class="tbd-label">السعر قريباً</span>' : ''}
+        </div>
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          ${priceHtml}
+          <div class="product-actions">
+            <button class="add-cart-btn" style="width:100%;justify-content:center" onclick="addToCart('${p.id}','accessory')">🛒 أضف للسلة</button>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+    document.getElementById('acc-count').textContent = accessoriesData.length + ' منتج';
+  }
+
+  // --- سلة ---
+  function getProduct(id) {
+    return [...shoesData, ...glovesData, ...accessoriesData].find(p => p.id === id);
+  }
+
+  function addToCart(id, type) {
+    const p = getProduct(id);
+    if (!p) return;
+    let size = null;
+    const sel = document.getElementById('size-' + id);
+    if (sel) {
+      size = sel.value;
+      if (!size) {
+        sel.style.borderColor = '#ff4444';
+        setTimeout(() => sel.style.borderColor = '', 1500);
+        alert('الرجاء اختيار المقاس أولاً');
+        return;
+      }
+    }
+    let price = type === 'shoe' ? (DISCOUNT_ACTIVE ? SHOE_SALE_PRICE : SHOE_NORMAL_PRICE)
+               : type === 'glove' ? GLOVE_PRICE
+               : p.price;
+
+    cart.push({ uid: Date.now() + Math.random(), id, name: p.name, type, price, size, emoji: p.emoji, img: p.img });
+    updateCartUI();
+    const fab = document.getElementById('cart-fab');
+    fab.style.transform = 'scale(1.3)';
+    setTimeout(() => fab.style.transform = '', 300);
+  }
+
+  function removeFromCart(uid) {
+    cart = cart.filter(i => i.uid !== uid);
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const cnt = document.getElementById('cart-count');
+    cnt.textContent = cart.length;
+    cnt.style.display = cart.length > 0 ? 'flex' : 'none';
+    const list = document.getElementById('cart-items-list');
+    if (!cart.length) {
+      list.innerHTML = `<div class="cart-empty"><div class="empty-icon">🛒</div><p>السلة فارغة</p></div>`;
+    } else {
+      list.innerHTML = cart.map(item => {
+        const imgEl = item.img
+          ? `<img class="cart-item-img" src="${item.img}" alt="${item.name}">`
+          : `<div class="cart-item-placeholder-img">${item.emoji}</div>`;
+        return `<div class="cart-item">
+          ${imgEl}
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-details">${item.size ? 'المقاس: ' + item.size : ''}</div>
+            <div class="cart-item-price">${item.price !== null ? item.price + ' BD' : 'يُحدد لاحقاً'}</div>
+          </div>
+          <button class="remove-item" onclick="removeFromCart(${item.uid})">✕</button>
+        </div>`;
+      }).join('');
+    }
+    const total = cart.reduce((s, i) => s + (i.price || 0), 0);
+    document.getElementById('cart-total-price').textContent = total + ' BD';
+  }
+
+  function openCart()  { document.getElementById('cart-modal').classList.add('open');    document.body.style.overflow = 'hidden'; }
+  function closeCart() { document.getElementById('cart-modal').classList.remove('open'); document.body.style.overflow = ''; }
+
+  function sendToWhatsApp() {
+    if (!cart.length) { alert('السلة فارغة. أضف منتجات أولاً.'); return; }
+    const phone = '97336825523';
+    const total = cart.reduce((s, i) => s + (i.price || 0), 0);
+    let msg = '🛒 *طلب جديد من متجر الجوهرة*\n\n';
+    cart.forEach((item, idx) => {
+      msg += `${idx + 1}. *${item.name}*\n`;
+      if (item.size) msg += `   📏 المقاس: ${item.size}\n`;
+      msg += `   💰 السعر: ${item.price !== null ? item.price + ' BD' : 'يُحدد لاحقاً'}\n\n`;
+    });
+    msg += `─────────────────\n💵 *المجموع: ${total} BD*\n\nشكراً لتسوقكم من الجوهرة ⚽`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+
+    // تحميل الصور تلقائياً
+    cart.filter(i => i.img).forEach(item => {
+      const a = document.createElement('a');
+      a.href = item.img;
+      a.download = item.name + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  }
+
+  // تشغيل
+  renderShoes();
+  renderGloves();
+  renderAccessories();
+
+</script>
+</body>
+</html>
